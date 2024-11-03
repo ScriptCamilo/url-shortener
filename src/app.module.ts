@@ -1,11 +1,11 @@
 import { Module } from '@nestjs/common';
+import { ConfigModule } from '@nestjs/config';
 
 import { AuthModule } from './modules/auth/auth.module';
 import { UsersModule } from './modules/users/users.module';
-import { EnvConfigModule } from './shared/infrastructure/env-config/env-config.module';
 
 @Module({
-  imports: [EnvConfigModule.forRoot(), UsersModule, AuthModule],
+  imports: [ConfigModule.forRoot({ isGlobal: true }), UsersModule, AuthModule],
   controllers: [],
   providers: [],
 })

@@ -1,0 +1,68 @@
+name: url-shortener-backend
+
+networks:
+  service:
+    driver: bridge
+  url-shortener-network:
+    external: true
+
+volumes:
+  url-shortener-pg-data:
+  url-shortener-redis-data:
+
+services:
+  postgres:
+    container_name: url-shortener-pg-database
+    image: postgres:16.0-alpine
+    restart: always
+    networks:
+      - service
+    environment:
+      - POSTGRES_USER=${DB_USER}
+      - POSTGRES_PASSWORD=${DB_PASS}
+      - POSTGRES_DB=${DB_NAME}
+    ports:
+      - 5432:5432
+    volumes:
+      - url-shortener-pg-data:/var/lib/postgresql/data
+
+  redis:
+    image: redis:latest
+    container_name: url-shortener-redis-database
+    restart: always
+    networks:
+      - service
+    ports:
+      - 6379:6379
+    environment:
+      REDIS_PASSWORD: ${REDIS_PASSWORD}
+    volumes:
+      - url-shortener-redis-data:/data
+
+  app:
+    container_name: url-shortener-backend-app
+    build:
+      context: .
+      args:
+        - NODE_VERSION=22
+      target: ${NODE_ENV}
+    networks:
+      - service
+      - url-shortener-network
+    environment:
+      - DATABASE_URL=postgresql://johndoe:randompassword@postgres:5432/url_shortener_db?schema=public
+    env_file:
+     - path: ./.env
+       required: true
+    ports:
+      - 8080:${PORT}
+      - 5555:5555
+    volumes:
+      - ./:/usr/src/app
+    links:
+      - postgres
+      - redis
+    depends_on:
+      - postgres
+      - redis
+    restart: always

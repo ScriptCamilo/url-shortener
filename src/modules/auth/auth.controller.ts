@@ -1,34 +1,20 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { AuthService } from './auth.service';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { Body, Controller, Post, Req, UseGuards } from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
 
+import { AuthPayloadDto } from './dto/auth-payload.dto';
+import { LocalGuard } from './guards/local.guard';
+
+@ApiTags('Authentication')
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor() {}
 
-  @Post()
-  create(@Body() createAuthDto: CreateAuthDto) {
-    return this.authService.create(createAuthDto);
-  }
+  @Post('login')
+  @UseGuards(LocalGuard)
+  login(@Body() _authPayloadDto: AuthPayloadDto, @Req() req: Request) {
+    const jwtObject = req.user as { access_token: string };
 
-  @Get()
-  findAll() {
-    return this.authService.findAll();
-  }
-
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.authService.findOne(+id);
-  }
-
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateAuthDto: UpdateAuthDto) {
-    return this.authService.update(+id, updateAuthDto);
-  }
-
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.authService.remove(+id);
+    return jwtObject;
   }
 }

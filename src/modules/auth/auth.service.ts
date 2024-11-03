@@ -1,26 +1,40 @@
 import { Injectable } from '@nestjs/common';
-import { CreateAuthDto } from './dto/create-auth.dto';
-import { UpdateAuthDto } from './dto/update-auth.dto';
+import { ConfigService } from '@nestjs/config';
+import { JwtService } from '@nestjs/jwt';
+import bcrypt from 'bcrypt';
+
+import { PrismaService } from '@/database/prisma.service';
+import { AuthPayloadDto } from './dto/auth-payload.dto';
 
 @Injectable()
 export class AuthService {
-  create(createAuthDto: CreateAuthDto) {
-    return 'This action adds a new auth';
-  }
+  constructor(
+    private jwtService: JwtService,
+    private configService: ConfigService,
+    private prismaService: PrismaService,
+  ) {}
 
-  findAll() {
-    return `This action returns all auth`;
-  }
+  async validateUser({ email, password }: AuthPayloadDto) {
+    const foundUser = await this.prismaService.user.findUnique({
+      where: { email },
+    });
 
-  findOne(id: number) {
-    return `This action returns a #${id} auth`;
-  }
+    if (!foundUser) return null;
 
-  update(id: number, updateAuthDto: UpdateAuthDto) {
-    return `This action updates a #${id} auth`;
-  }
+    const isPasswordCorrect = await bcrypt.compare(password, foundUser.password);
 
-  remove(id: number) {
-    return `This action removes a #${id} auth`;
+    if (isPasswordCorrect) {
+      const { id } = foundUser;
+      return {
+        access_token: this.jwtService.sign(
+          { id },
+          {
+            algorithm: 'HS256',
+            secret: this.configService.get<string>('JWT_SECRET'),
+            expiresIn: '30d',
+          },
+        ),
+      };
+    }
   }
 }

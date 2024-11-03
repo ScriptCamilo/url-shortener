@@ -1,34 +1,63 @@
-import { Controller, Get, Post, Body, Patch, Param, Delete } from '@nestjs/common';
-import { UsersService } from './users.service';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  HttpCode,
+  HttpStatus,
+  Patch,
+  Post,
+  Req,
+  UseGuards,
+} from '@nestjs/common';
+import { ApiTags } from '@nestjs/swagger';
+import { Request } from 'express';
+
+import { JwtAuthGuard } from '@/modules/auth/guards/jwt.guard';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
+import { UsersService } from './users.service';
 
-@Controller('users')
+@ApiTags('User')
+@Controller('user')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto) {
-    return this.usersService.create(createUserDto);
+  @HttpCode(HttpStatus.CREATED)
+  @Post('register')
+  async create(@Body() createUserDto: CreateUserDto) {
+    const createdUser = await this.usersService.create(createUserDto);
+    return createdUser;
   }
 
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
   @Get()
-  findAll() {
-    return this.usersService.findAll();
+  async findOne(@Req() req: Request) {
+    const jwtUser = req.user as { id: string };
+    console.log({ jwtUser });
+    const foundUser = await this.usersService.findOne(jwtUser.id);
+
+    return foundUser;
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.usersService.findOne(+id);
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @Patch()
+  async update(@Req() req: Request, @Body() updateUserDto: UpdateUserDto) {
+    const jwtUser = req.user as { id: string };
+    const updatedUser = await this.usersService.update(jwtUser.id, updateUserDto);
+
+    return updatedUser;
   }
 
-  @Patch(':id')
-  update(@Param('id') id: string, @Body() updateUserDto: UpdateUserDto) {
-    return this.usersService.update(+id, updateUserDto);
-  }
+  @HttpCode(HttpStatus.OK)
+  @UseGuards(JwtAuthGuard)
+  @Delete()
+  async remove(@Req() req: Request) {
+    const jwtUser = req.user as { id: string };
+    const deletedUser = await this.usersService.remove(jwtUser.id);
 
-  @Delete(':id')
-  remove(@Param('id') id: string) {
-    return this.usersService.remove(+id);
+    return deletedUser;
   }
 }
