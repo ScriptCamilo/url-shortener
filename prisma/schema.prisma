@@ -27,7 +27,7 @@ model User {
 }
 
 model Url {
-  id        Int       @id @default(autoincrement())
+  id        String    @id @default(uuid())
   longUrl   String    @map("long_url")
   shortUrl  String    @unique @map("short_url")
   clicks    Int       @default(0)

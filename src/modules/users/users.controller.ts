@@ -19,7 +19,7 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { UsersService } from './users.service';
 
 @ApiTags('User')
-@Controller('user')
+@Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}
 
@@ -32,10 +32,9 @@ export class UsersController {
 
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
-  @Get()
+  @Get('me')
   async findOne(@Req() req: Request) {
     const jwtUser = req.user as { id: string };
-    console.log({ jwtUser });
     const foundUser = await this.usersService.findOne(jwtUser.id);
 
     return foundUser;

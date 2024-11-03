@@ -2,6 +2,7 @@ import {
   ConflictException,
   Injectable,
   InternalServerErrorException,
+  Logger,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
@@ -14,6 +15,8 @@ import { UpdateUserDto } from './dto/update-user.dto';
 
 @Injectable()
 export class UsersService {
+  private readonly logger = new Logger(UsersService.name);
+
   constructor(
     private prismaService: PrismaService,
     private authService: AuthService,
@@ -35,11 +38,11 @@ export class UsersService {
       return { ...jwtObject, ...user };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
-        console.error(error.message);
+        this.logger.error(error.message);
         throw new ConflictException('Email is already registered');
       }
 
-      console.error(error);
+      this.logger.error(error);
       throw new InternalServerErrorException();
     }
   }
@@ -56,10 +59,10 @@ export class UsersService {
       return user;
     } catch (error) {
       if (error instanceof NotFoundException) {
-        throw new NotFoundException("User doesn't exist");
+        throw new NotFoundException('User Not Found');
       }
 
-      console.error(error);
+      this.logger.error(error);
       throw new InternalServerErrorException();
     }
   }
@@ -75,11 +78,11 @@ export class UsersService {
       return user;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
-        console.error(error.message);
-        throw new NotFoundException("User doesn't exist");
+        this.logger.error(error.message);
+        throw new NotFoundException('User Not Found');
       }
 
-      console.error(error);
+      this.logger.error(error);
       throw new InternalServerErrorException();
     }
   }
@@ -94,11 +97,11 @@ export class UsersService {
       return user;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
-        console.error(error.message);
-        throw new NotFoundException("User doesn't exist");
+        this.logger.error(error.message);
+        throw new NotFoundException('User Not Found');
       }
 
-      console.error(error);
+      this.logger.error(error);
       throw new InternalServerErrorException();
     }
   }
