@@ -14,7 +14,7 @@ Este projeto é um encurtador de URLs construído com NestJS e Prisma. Ele permi
 ## Pré-Requisitos
 
 - [Node.js (latest stable version)](https://nodejs.org/en)
-- [Docker (version 27.2.1)](https://www.docker.com/get-started)
+- [Docker (version 27.2.1 or similar)](https://www.docker.com/get-started)
 
 ## Environment Variables
 
@@ -56,7 +56,7 @@ npm run docker:up
 3. **Faça uma instalação limpa das dependências**:
 
 ```bash
-npm ci
+npm install
 ```
 
 4. **Configure o banco de dados PostgreSQL e o Redis para cache**:
