@@ -47,7 +47,7 @@ cd url-shortener
 
 2. **Caso queira rodar o projeto totalmente Dockerizado**:
 
-Você pode rodar o seguinte comando para subir todos os containers e rodar em ambiente docker, lembrando que é necessário ter criado o arquivo .env primeiro e configurado todas as variáveis de ambiente. **Utilizando esse comando não é necessário fazer os próximos passos, caso queira rodar localmente sem dockerizar o app é só pular o passo 2.
+Você pode rodar o seguinte comando para subir todos os containers e rodar em ambiente docker, lembrando que é necessário ter criado o arquivo .env primeiro e configurado todas as variáveis de ambiente. **Utilizando esse comando não é necessário fazer os próximos passos, caso queira rodar localmente sem dockerizar o app é só pular o passo 2**.
 
 ```bash
 npm run docker:up
