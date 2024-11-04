@@ -53,16 +53,16 @@ Você pode rodar o seguinte comando para subir todos os containers e rodar em am
 npm run docker:up
 ```
 
-3. **Faça uma instalação limpa das dependências**:
+1. **Faça a instalação das dependências**:
 
 ```bash
 npm install
 ```
 
-4. **Configure o banco de dados PostgreSQL e o Redis para cache**:
+1. **Configure o banco de dados PostgreSQL**:
 
 ```bash
-docker compose up -d --build postgres redis
+docker compose up -d --build postgres
 ```
 
 5. **Inicialize o prisma**:
