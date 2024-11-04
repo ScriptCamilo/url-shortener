@@ -33,7 +33,10 @@ export class UsersService {
         },
       });
 
-      const jwtObject = await this.authService.validateUser({ email: user.email, password });
+      const jwtObject = await this.authService.validateUser({
+        email: user.email,
+        password,
+      });
 
       return { ...jwtObject, ...user };
     } catch (error) {

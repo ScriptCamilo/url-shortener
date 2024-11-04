@@ -9,5 +9,6 @@ import { UrlsService } from './urls.service';
   imports: [PrismaModule, ConfigModule],
   controllers: [UrlsController],
   providers: [UrlsService],
+  exports: [UrlsService],
 })
 export class UrlsModule {}

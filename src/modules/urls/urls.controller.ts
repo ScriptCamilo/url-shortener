@@ -44,8 +44,10 @@ export class UrlsController {
   @HttpCode(HttpStatus.OK)
   @UseGuards(JwtAuthGuard)
   @Get(':id')
-  findOne(@Param('id') id: string) {
-    return this.urlsService.findOne(id);
+  findOne(@Req() req: Request, @Param('id') id: string) {
+    const user = req.user as { id: string };
+
+    return this.urlsService.findOne({ id, userId: user.id });
   }
 
   @HttpCode(HttpStatus.OK)
