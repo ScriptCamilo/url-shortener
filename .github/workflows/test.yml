@@ -32,7 +32,7 @@ jobs:
       run: npm ci
 
     - name: 'Create env file'
-      run: echo "${{ secrets.ENV_FILE }}" > .env
+      run: echo "JWT_SECRET=${{ secrets.JWT_SECRET }}" >> .env
 
     - name: Run tests
       run: npm test
