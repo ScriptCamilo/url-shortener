@@ -26,16 +26,15 @@ export class UsersService {
     try {
       const saltOrRounds = 10;
       const encryptedPassword = await bcrypt.hash(createUserDto.password, saltOrRounds);
-      const { password, ...user } = await this.prismaService.user.create({
+      const { password: _, ...user } = await this.prismaService.user.create({
         data: {
           ...createUserDto,
           password: encryptedPassword,
         },
       });
-
       const jwtObject = await this.authService.validateUser({
         email: user.email,
-        password,
+        password: createUserDto.password,
       });
 
       return { ...jwtObject, ...user };

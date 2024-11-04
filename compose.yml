@@ -8,6 +8,7 @@ networks:
 
 volumes:
   url-shortener-pg-data:
+  nodemodules: {}
 
 services:
   postgres:
@@ -45,10 +46,9 @@ services:
       - 5555:5555
     volumes:
       - ./:/usr/src/app
+      - nodemodules:/app/node_modules
     links:
       - postgres
-      - redis
     depends_on:
       - postgres
-      - redis
     restart: always
