@@ -36,8 +36,7 @@ export default [
 
       parserOptions: {
         project: 'tsconfig.json',
-        tsconfigRootDir:
-          '/home/camilo/developments/tecnologiaplus/repos/teddyopenfinance/url-shortener',
+        tsconfigRootDir: __dirname,
       },
     },
 

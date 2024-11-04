@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 
@@ -8,6 +9,7 @@ import { UsersModule } from './modules/users/users.module';
 
 @Module({
   imports: [
+    CacheModule.register({ isGlobal: true }),
     ConfigModule.forRoot({ isGlobal: true }),
     UsersModule,
     AuthModule,

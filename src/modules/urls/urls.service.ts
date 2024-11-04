@@ -1,4 +1,6 @@
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import {
+  Inject,
   Injectable,
   InternalServerErrorException,
   Logger,
@@ -6,6 +8,7 @@ import {
 } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Cache } from 'cache-manager';
 import { nanoid } from 'nanoid';
 
 import { PrismaService } from '@/database/prisma.service';
@@ -20,15 +23,18 @@ export class UrlsService {
   constructor(
     private prismaService: PrismaService,
     private configService: ConfigService,
+    @Inject(CACHE_MANAGER) private cacheManager: Cache,
   ) {}
 
-  create({ longUrl }: CreateUrlDto, userId?: string) {
+  async create({ longUrl }: CreateUrlDto, userId?: string) {
     const maxLength = 6;
     const minLength = 3;
     const urlIdLength = Math.floor(Math.random() * (maxLength - minLength + 1)) + minLength;
     const urlId = nanoid(urlIdLength);
     const hostUrl = this.configService.get<string>('HOST_URL');
     const shortUrl = `${hostUrl}/${urlId}`;
+
+    await this.cacheManager.del(`urls-${userId}`);
 
     return this.prismaService.url.create({
       data: {
@@ -39,13 +45,21 @@ export class UrlsService {
     });
   }
 
-  findAll(userId: string) {
-    return this.prismaService.url.findMany({
+  async findAll(userId: string) {
+    const cachedUrls = await this.cacheManager.get(`urls-${userId}`);
+
+    if (cachedUrls) return cachedUrls;
+
+    const urls = await this.prismaService.url.findMany({
       where: {
         userId,
         deletedAt: null,
       },
     });
+
+    await this.cacheManager.set(`urls-${userId}`, urls);
+
+    return urls;
   }
 
   async findOne(args: FindUrlDto) {
@@ -70,6 +84,8 @@ export class UrlsService {
         data: updateUserDto,
       });
 
+      await this.cacheManager.del(`urls-${userId}`);
+
       return url;
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
@@ -84,11 +100,12 @@ export class UrlsService {
 
   async remove(id: string, userId: string) {
     try {
-      console.log({ userId });
       const url = await this.prismaService.url.update({
         where: { id, userId, deletedAt: null },
         data: { deletedAt: new Date() },
       });
+
+      await this.cacheManager.del(`urls-${userId}`);
 
       return url;
     } catch (error) {
@@ -103,9 +120,13 @@ export class UrlsService {
   }
 
   async incrementClick(id: string) {
-    return this.prismaService.url.update({
+    const url = await this.prismaService.url.update({
       where: { id },
       data: { clicks: { increment: 1 } },
     });
+
+    await this.cacheManager.del(`urls-${url.userId}`);
+
+    return url;
   }
 }

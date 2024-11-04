@@ -1,3 +1,4 @@
+import { CacheModule } from '@nestjs/cache-manager';
 import { ConfigModule } from '@nestjs/config';
 import { Test, TestingModule } from '@nestjs/testing';
 
@@ -10,7 +11,7 @@ describe('RedirectController', () => {
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
-      imports: [UrlsModule, ConfigModule],
+      imports: [UrlsModule, ConfigModule, CacheModule.register({ isGlobal: true })],
       controllers: [RedirectController],
       providers: [RedirectService],
     }).compile();
