@@ -53,13 +53,13 @@ Você pode rodar o seguinte comando para subir todos os containers e rodar em am
 npm run docker:up
 ```
 
-1. **Faça a instalação das dependências**:
+3. **Faça a instalação das dependências**:
 
 ```bash
 npm install
 ```
 
-1. **Configure o banco de dados PostgreSQL**:
+4. **Configure o banco de dados PostgreSQL**:
 
 ```bash
 docker compose up -d --build postgres
@@ -82,7 +82,7 @@ npm run start:dev
 
 2. **Acesse a documentação da API com o Swagger**:
 
-Estará disponível em <http://localhost:8080/api>
+Estará disponível em <http://localhost:8080/api> localmente
 
 ## Rodando os testes
 
@@ -91,6 +91,13 @@ Para rodar os testes, rode o seguinte comando
 ```bash
   npm test
 ```
+
+## Deployment
+
+O projeto está rodando em uma VPS com [EasyPanel](https://easypanel.io) e pode ser acessada pelos seguintes links:
+
+- <https://url-shortener-camilo-backend.ochjkq.easypanel.host>
+- <https://url-shortener-camilo-backend.ochjkq.easypanel.host/api>
 
 ## Screenshots
 
