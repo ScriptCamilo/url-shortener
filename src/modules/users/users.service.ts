@@ -24,8 +24,7 @@ export class UsersService {
 
   async create(createUserDto: CreateUserDto) {
     try {
-      const saltOrRounds = 10;
-      const encryptedPassword = await bcrypt.hash(createUserDto.password, saltOrRounds);
+      const encryptedPassword = await this.encryptPassword(createUserDto.password);
       const { password: _, ...user } = await this.prismaService.user.create({
         data: {
           ...createUserDto,
@@ -71,10 +70,14 @@ export class UsersService {
 
   async update(id: string, updateUserDto: UpdateUserDto) {
     try {
+      const encryptedPassword = await this.encryptPassword(updateUserDto.password);
       const user = await this.prismaService.user.update({
         omit: { password: true },
         where: { id },
-        data: updateUserDto,
+        data: {
+          ...updateUserDto,
+          password: encryptedPassword,
+        },
       });
 
       return user;
@@ -106,5 +109,12 @@ export class UsersService {
       this.logger.error(error);
       throw new InternalServerErrorException();
     }
+  }
+
+  async encryptPassword(password: string) {
+    if (!password) return;
+
+    const saltOrRounds = 10;
+    return await bcrypt.hash(password, saltOrRounds);
   }
 }
