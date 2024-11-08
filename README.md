@@ -98,7 +98,7 @@ O projeto está rodando em uma VPS com [EasyPanel](https://easypanel.io) e pode 
 
 - <https://url-shortener-camilo-backend.ochjkq.easypanel.host>
 - <https://url-shortener-camilo-backend.ochjkq.easypanel.host/api>
-- <https://https://url-shortener-client-flame.vercel.app> (Em produção)
+- <https://url-shortener-client-flame.vercel.app> (Em produção)
 
 ## Screenshots
 
